@@ -11,12 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Run a one-line script
-        id: hello_world
-        run: echo Hello, world!
-
       - name: automerge
         uses: pascalgn/automerge-action@v0.15.3
         env:
