@@ -14,11 +14,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          
       - uses: everlytic/branch-merge@1.1.2
         with:
           github_token: ${{ secrets.GIT_PARTNER_PAT }}
           source_ref: 'origin/master'
-          target_branch: ${{ github.ref }}
+          target_branch: ${{ github.event.pull_request.head.ref }}
           commit_message_template: '[Automated] Merged Master Apply the latest Head'
     
       - name: automerge
