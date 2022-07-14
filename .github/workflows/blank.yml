@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    if: github.event.sender.login != "LianJo"
     runs-on: ubuntu-latest
   
     steps:
@@ -15,7 +16,4 @@ jobs:
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
-          
-      - name: test
-        run: |
-          echo ${{ toJSON(github.event) }}
+      
