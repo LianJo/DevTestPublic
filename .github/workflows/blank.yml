@@ -19,4 +19,3 @@ jobs:
           MERGE_RETRIES: 10
           MERGE_RETRY_SLEEP: 10000
           MERGE_METHOD: rebase
-          LOG: TRACE
