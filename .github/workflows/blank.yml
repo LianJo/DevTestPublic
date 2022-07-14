@@ -21,4 +21,5 @@ jobs:
       
       - name: test
         run: |
-          echo hello
+          foo=("aa" "bb")
+          echo ${#foo[*]}
