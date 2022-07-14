@@ -21,4 +21,4 @@ jobs:
       
       - name: test
         run: |
-          echo ${{ toJson(github.event) }}
+          echo hello
