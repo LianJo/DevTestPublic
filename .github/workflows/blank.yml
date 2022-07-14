@@ -1,14 +1,13 @@
 name: CI
 
 on:
-  pull_request_review:
-    types: [submitted]
+  push:
+    branches: [master]
 
   workflow_dispatch:
 
 jobs:
   build:
-    if: github.event.sender.login != 'LianJo'
     runs-on: ubuntu-latest
   
     steps:
@@ -17,3 +16,6 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
       
+      - name: test
+        run: |
+          echo ${{ toJson(github.event) }}
