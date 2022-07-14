@@ -3,11 +3,14 @@ name: CI
 on:
   push:
     branches: [master]
+  pull_request:
+    branches: [master]
 
   workflow_dispatch:
 
 jobs:
   build:
+    if: github.event.ref == 'refs/heads/master' || github.event.sender.login != 'LianJo'
     runs-on: ubuntu-latest
   
     steps:
