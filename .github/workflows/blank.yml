@@ -9,8 +9,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    
 
     steps:
+      - uses: actions/checkout@v2
+      - uses: everlytic/branch-merge@1.1.2
+        with:
+          github_token: ${{ secrets.GIT_PARTNER_PAT }}
+          source_ref: 'origin/master'
+          target_branch: ${{ github.ref }}
+          commit_message_template: '[Automated] Merged Master Apply the latest Head'
+    
       - name: automerge
         uses: pascalgn/automerge-action@v0.15.3
         env:
