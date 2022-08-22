@@ -35,8 +35,8 @@ function pushTag {
     type=$1
     tag_name=$2
 
-    if [[ $type == "release" ]]; then
-        git tag -a "${tag_name}" -m "ci: Release Tagging '${tag_name}' to master"
+    if [[ $type != "release" ]]; then
+        git tag -a "${tag_name}" -m "ci: Pre-Release Version Tagging '${tag_name}' to master"
         git push origin "${tag_name}"
     fi
 }
