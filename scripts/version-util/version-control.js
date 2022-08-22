@@ -75,7 +75,7 @@ function main() {
     const configFilePath = getConfigFilePath(projectBuildType, projectRootPath);
     const versionString = parseVersionAtFile(configFilePath);
 
-    const newVersion = bumping(versionString);
+    const newVersion = bumping(bumpType, versionString);
     
     if (bumpType === 'release') {
         upgradeVersionAtFile(configFilePath, newVersion);
