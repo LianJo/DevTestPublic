@@ -1,5 +1,12 @@
-const TappytoonSemVer = require('./model/TappytoonSemVer');
 const fs = require('fs');
+
+
+function parseVersionAtFile(filePath) {
+    const versionRegex = /(?<=(["']?version["']?[\s=:]+["']))((?!version)[\w.\-]+)?(?=["'])/g;
+    const fileContext = fs.readFileSync(filePath, 'utf8');
+
+    return fileContext.match(versionRegex);
+}
 
 
 /**
@@ -13,10 +20,26 @@ function getConfigFilePath(projectBuildType, serviceRootPath) {
     }
 
     if (projectBuildType === 'nodejs') {
-        return checkFilePath(`${serviceRootPath}/package.json`);
+        return checkFilePath(`${serviceRootPath}/version.json`);
     }
 
     throw new Error('Please, check to valid type (gradle|nodejs).');
+}
+
+function bumping(currentVersionString) {
+    const splitVersions = currentVersionString.split('.');
+    if (bumpType === 'major') {
+        const vMajor = Number(splitVersions[0]) + 1;
+        return `${vMajor}.${splitVersions[1]}.${splitVersions[2]}`;
+    } else if(bumpType === 'minor') {
+        const vMinor = Number(splitVersions[1]) + 1;
+        return `${splitVersions[0]}.${vMinor}.${splitVersions[2]}`;
+    } else if(bumpType === 'patch') {
+        const vPatch = Number(splitVersions[2]) + 1;
+        return `${splitVersions[0]}.${splitVersions[1]}.${vPatch}`;
+    } else {
+        return currentVersionString;
+    }
 }
 
 /**
@@ -35,20 +58,8 @@ function main() {
     const configFilePath = getConfigFilePath(projectBuildType, projectRootPath);
     const versionString = parseVersionAtFile(configFilePath);
 
-    const version = TappytoonSemVer.parse(versionString[0]);
-
-    if (bumpType === 'major' || bumpType === 'minor' || bumpType === 'patch') {
-        const lastVersion = TappytoonSemVer.parse(lastVersionString);
-        const newVersion = version.bump(lastVersion, bumpType);
-
-        upgradeVersionAtFile(configFilePath, newVersion);
-        console.log(newVersion.toString());
-    } else if (bumpType === 'release') {
-        // Get a manually modified version.
-        console.log(versionString[0]);
-    } else {
-        throw new Error('Only one of the following buildType{major|minor|patch} can be selected.');
-    }
+    const newVersion = bumping(versionString);
+    console.log(newVersion);
 }
 
 main();
