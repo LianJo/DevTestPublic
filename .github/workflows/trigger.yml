@@ -44,7 +44,7 @@ jobs:
   bumping:
     needs: trigger_path_check
     if: needs.trigger_path_check.outputs.project_root_path != '' && needs.trigger_path_check.outputs.project_name != ''
-    uses: LianJo/DevTestPublic/.github/workflows/version-bumping-bot.yml@master
+    uses: LianJo/DevTestPublic/.github/workflows/bumping.yml@master
     with:
       project_root_path: ${{ needs.trigger_path_check.outputs.project_root_path }}
       project_name: ${{ needs.trigger_path_check.outputs.project_name }}
