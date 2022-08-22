@@ -47,7 +47,7 @@ jobs:
         run: |
           if [ "${{ steps.tagger.outcome }}" != "success" ]
           then
-            echo "LAST_TAG=0.0.0" >> $GITHUB_ENV
+            echo "LAST_TAG='${{ inputs.project_name }}/0.0.0'" >> $GITHUB_ENV
           else
             echo "LAST_TAG=${new_version}" >> $GITHUB_ENV
           fi
