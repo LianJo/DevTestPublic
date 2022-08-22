@@ -41,6 +41,16 @@ jobs:
           # releases-only: false  # This repository doesn't use GitHub's "release" feature.
           regex: "^${{ inputs.project_name }}/"
         id: tagger
+        continue-on-error: true
+
+      - name: save-last-tag
+        run: |
+          if [ "${{ steps.tagger.outcome }}" != "success" ]
+          then
+            echo "LAST_TAG=0.0.0" >> $GITHUB_ENV
+          else
+            echo "LAST_TAG=${new_version}" >> $GITHUB_ENV
+          fi
 
       - name: change_file
         run: |
@@ -51,7 +61,7 @@ jobs:
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           
           chmod +x ./scripts/version-util/workflow_running.sh
-          new_version=$(bash ./scripts/version-util/workflow_running.sh -p $pr_title -r ${{ inputs.project_root_path }} -n ${{ inputs.project_name }} -t ${{ steps.tagger.outputs.tag }})
+          new_version=$(bash ./scripts/version-util/workflow_running.sh -p $pr_title -r ${{ inputs.project_root_path }} -n ${{ inputs.project_name }} -t ${{ env.LAST_TAG }})
           echo "NEW_VERSION=${new_version}" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
@@ -74,17 +84,3 @@ jobs:
       - uses: hmarr/auto-approve-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  automerge:
-    needs: auto_approve
-    runs-on: ubuntu-20.04
-    steps:
-      - id: automerge
-        name: automerge
-        uses: pascalgn/automerge-action@v0.15.3
-        env:
-          GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
-          MERGE_LABELS: ""
-          MERGE_RETRIES: 10
-          MERGE_RETRY_SLEEP: 10000
-          LOG: DEBUG
