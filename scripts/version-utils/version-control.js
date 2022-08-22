@@ -9,6 +9,15 @@ function parseVersionAtFile(filePath) {
 }
 
 
+function upgradeVersionAtFile(filePath, upgradeVersion) {
+    const versionRegex = /(?<=(["']?version["']?[\s=:]+["']))((?!version)[\w.\-]+)?(?=["'])/g;
+    const fileContext = fs.readFileSync(filePath, 'utf8');
+    const upgradeContext = fileContext.replace(versionRegex, upgradeVersion.toString());
+
+    fs.writeFileSync(filePath, upgradeContext);
+}
+
+
 /**
  * @param projectBuildType {string}
  * @param serviceRootPath {string}
@@ -26,7 +35,7 @@ function getConfigFilePath(projectBuildType, serviceRootPath) {
     throw new Error('Please, check to valid type (gradle|nodejs).');
 }
 
-function bumping(currentVersionString) {
+function bumping(bumpType, currentVersionString) {
     const splitVersions = currentVersionString.split('.');
     if (bumpType === 'major') {
         const vMajor = Number(splitVersions[0]) + 1;
@@ -59,6 +68,11 @@ function main() {
     const versionString = parseVersionAtFile(configFilePath);
 
     const newVersion = bumping(versionString);
+    
+    if (bumpType === 'release') {
+        upgradeVersionAtFile(configFilePath, newVersion);
+    }
+    
     console.log(newVersion);
 }
 
