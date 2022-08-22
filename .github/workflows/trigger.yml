@@ -1,0 +1,52 @@
+name: bumping trigger filter
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  trigger_path_check:
+    runs-on: ubuntu-20.04 #or any other runner
+    outputs:
+      project_root_path: ${{ steps.output-project-root-path.outputs.projectRootPath }}
+      project_name: ${{ steps.output-project-name.outputs.projectName }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: pathChecker
+        with:
+          filters: |
+            dir-filter:
+              - 'test_project_dir/**'
+
+      - id: output-project-root-path
+        run: |
+          getRootPath () {
+            cond=$1
+            output=$2
+
+            [ "$cond" = "true" ] && [ "${{ github.event.review.state }}" = "approved" ] && echo "::set-output name=projectRootPath::$output"
+          }
+
+          echo `getRootPath ${{ steps.pathChecker.outputs.book-ranking-api-filter }} test_project_dir`
+
+      - id: output-project-name
+        run: |
+          getProjectName () {
+            cond=$1
+            output=$2
+
+            [ "$cond" = "true" ] && [ "${{ github.event.review.state }}" = "approved" ] && echo "::set-output name=projectName::$output"
+          }
+          
+          echo `getProjectName ${{ steps.pathChecker.outputs.book-ranking-api-filter }} test`
+
+  bumping:
+    needs: trigger_path_check
+    if: needs.trigger_path_check.outputs.project_root_path != '' && needs.trigger_path_check.outputs.project_name != ''
+    uses: LianJo/DevTestPublic/.github/workflows/version-bumping-bot.yml@master
+    with:
+      project_root_path: ${{ needs.trigger_path_check.outputs.project_root_path }}
+      project_name: ${{ needs.trigger_path_check.outputs.project_name }}
+    secrets:
+      CI_BOT_GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
