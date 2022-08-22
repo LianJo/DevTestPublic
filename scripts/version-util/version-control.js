@@ -17,6 +17,14 @@ function upgradeVersionAtFile(filePath, upgradeVersion) {
     fs.writeFileSync(filePath, upgradeContext);
 }
 
+function checkFilePath(filePath) {
+    if (fs.existsSync(filePath)) {
+        return filePath;
+    } else {
+        return new Error('File path does not exist, check to path.');
+    }
+}
+
 
 /**
  * @param projectBuildType {string}
