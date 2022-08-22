@@ -17,7 +17,7 @@ jobs:
         with:
           filters: |
             dir-filter:
-              - 'test_project_dir/**'
+              - 'nodejs/test_project_dir/**'
 
       - id: output-project-root-path
         run: |
@@ -28,7 +28,7 @@ jobs:
             [ "$cond" = "true" ] && [ "${{ github.event.review.state }}" = "approved" ] && echo "::set-output name=projectRootPath::$output"
           }
 
-          echo `getRootPath ${{ steps.pathChecker.outputs.book-ranking-api-filter }} test_project_dir`
+          echo `getRootPath ${{ steps.pathChecker.outputs.book-ranking-api-filter }} nodejs/test_project_dir`
 
       - id: output-project-name
         run: |
