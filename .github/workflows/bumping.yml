@@ -1,0 +1,90 @@
+name: bumping version
+
+on:
+  workflow_call:
+    inputs:
+      project_root_path:
+        required: true
+        type: string
+      project_name:
+        required: true
+        type: string
+    secrets:
+      CI_BOT_GITHUB_TOKEN:
+        required: true
+
+jobs:
+  bumping_version:
+    if: ${{ github.event_name == 'pull_request_review' && github.event.review.state == 'approved' }}
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    name: bumping version commit
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: oprypin/find-latest-tag@v1
+        with:
+          repository: ${{ github.repository }}
+          # releases-only: false  # This repository doesn't use GitHub's "release" feature.
+          regex: "^${{ inputs.project_name }}/"
+        id: tagger
+
+      - name: change_file
+        run: |
+          pr_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          pr_title=$(gh pr view $pr_number --json title | jq -r ".title")
+          
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          
+          chmod +x ./scripts/version-util/workflow_running.sh
+          new_version=$(bash ./scripts/version-util/workflow_running.sh -p $pr_title -r ${{ inputs.project_root_path }} -n ${{ inputs.project_name }} -t ${{ steps.tagger.outputs.tag }})
+          echo "NEW_VERSION=${new_version}" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
+
+      - name: commit and push
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: .
+          message: "ci: automatic version bumping '${{ inputs.project_name }}' to '${{ env.NEW_VERSION }}'"
+          pull: -q
+          push: true
+          cwd: .
+
+  auto_approve:
+    needs: bumping_version
+    runs-on: ubuntu-20.04
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: hmarr/auto-approve-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  automerge:
+    needs: auto_approve
+    runs-on: ubuntu-20.04
+    steps:
+      - id: automerge
+        name: automerge
+        uses: pascalgn/automerge-action@v0.15.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
+          MERGE_LABELS: ""
+          MERGE_RETRIES: 10
+          MERGE_RETRY_SLEEP: 10000
+          LOG: DEBUG
