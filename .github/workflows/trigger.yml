@@ -28,7 +28,7 @@ jobs:
             [ "$cond" = "true" ] && [ "${{ github.event.review.state }}" = "approved" ] && echo "::set-output name=projectRootPath::$output"
           }
 
-          echo `getRootPath ${{ steps.pathChecker.outputs.book-ranking-api-filter }} nodejs/test_project_dir`
+          echo `getRootPath ${{ steps.pathChecker.outputs.dir-filter }} nodejs/test_project_dir`
 
       - id: output-project-name
         run: |
@@ -39,7 +39,7 @@ jobs:
             [ "$cond" = "true" ] && [ "${{ github.event.review.state }}" = "approved" ] && echo "::set-output name=projectName::$output"
           }
           
-          echo `getProjectName ${{ steps.pathChecker.outputs.book-ranking-api-filter }} test`
+          echo `getProjectName ${{ steps.pathChecker.outputs.dir-filter }} test`
 
   bumping:
     needs: trigger_path_check
