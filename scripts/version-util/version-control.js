@@ -44,9 +44,6 @@ function getConfigFilePath(projectBuildType, serviceRootPath) {
 }
 
 function bumping(bumpType, currentVersionString) {
-    console.log(currentVersionString);
-    console.log(bumpType);
-    
     const splitVersions = currentVersionString.split('.');
     
     if (bumpType === 'major') {
