@@ -31,4 +31,4 @@ jobs:
 
           echo ${{ needs.bumping }}
 
-          echo ${{ toJson(github.event) }}
+          echo ${{ fromJson(github.event) }}
