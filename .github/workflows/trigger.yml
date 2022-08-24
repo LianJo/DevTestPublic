@@ -2,6 +2,9 @@ name: bumping trigger filter
 
 on:
   workflow_call:
+    outputs:
+      NEW_VERSION:
+        value: ${{ jobs.bumping.outputs.NEW_VERSION }}
     secrets:
       CI_BOT_GITHUB_TOKEN:
         required: true
