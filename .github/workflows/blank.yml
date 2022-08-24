@@ -10,6 +10,7 @@ on:
 
 jobs:
   bumping:
+    if: ${{ github.event.pull_request.base.ref == "master" }}
     uses: LianJo/DevTestPublic/.github/workflows/trigger.yml@master
     secrets:
       CI_BOT_GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
