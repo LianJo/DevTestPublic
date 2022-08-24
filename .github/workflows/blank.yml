@@ -9,9 +9,17 @@ on:
   workflow_dispatch:
 
 jobs:
+  bumping:
+    uses: LianJo/DevTestPublic/.github/workflows/trigger.yml@master
+    secrets:
+      CI_BOT_GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
+
   build:
-    if: github.event.ref == 'refs/heads/master' || github.event.sender.login != 'LianJo'
-    runs-on: ubuntu-latest
+    needs: bumping
+    runs-on: ubuntu-20.04
+
+    env:
+      new_ver: ${{ needs.bumping.outputs }}
   
     steps:
       - uses: actions/checkout@v2

@@ -14,9 +14,10 @@ on:
         required: true
 
 jobs:
-  bumping_version:
-    if: ${{ github.event_name == 'pull_request_review' && github.event.review.state == 'approved' }}
+  bumping_and_push-tag:
     runs-on: ubuntu-20.04
+    outputs:
+      LAST_TAG: ${{ steps.save-last-tag.outputs.lastTag }}
 
     strategy:
       matrix:
@@ -49,8 +50,9 @@ jobs:
           then
             echo "LAST_TAG=${{ inputs.project_name }}/0.0.0" >> $GITHUB_ENV
           else
-            echo "LAST_TAG=${new_version}" >> $GITHUB_ENV
+            echo "LAST_TAG=${{ steps.tagger.outputs.tag }}" >> $GITHUB_ENV
           fi
+          echo "::set-output name=lastTag::${LAST_TAG}"
 
       - name: change_file
         run: |
@@ -66,21 +68,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
 
-      - name: commit and push
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: .
-          message: "ci: automatic version bumping '${{ inputs.project_name }}' to '${{ env.NEW_VERSION }}'"
-          pull: -q
-          push: true
-          cwd: .
-
-  auto_approve:
-    needs: bumping_version
-    runs-on: ubuntu-20.04
-    permissions:
-      pull-requests: write
-    steps:
-      - uses: hmarr/auto-approve-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}

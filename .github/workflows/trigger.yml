@@ -1,8 +1,10 @@
 name: bumping trigger filter
 
 on:
-  pull_request_review:
-    types: [submitted]
+  workflow_call:
+    secrets:
+      CI_BOT_GITHUB_TOKEN:
+        required: true
 
 jobs:
   trigger_path_check:
