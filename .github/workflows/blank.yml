@@ -34,7 +34,7 @@ jobs:
           echo '${{ toJSON(github.event) }}'
 
   test-build:
-    if: contains(github.event.action, synchronize) || contains(github.event.action, opened) 
+    if: contains(github.event.action, 'synchronize') || contains(github.event.action, 'opened') 
     runs-on: ubuntu-20.04
   
     steps:
