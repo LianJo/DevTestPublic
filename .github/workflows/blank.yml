@@ -10,11 +10,13 @@ on:
 
 jobs:
   bumping:
+    if: contains(github.ref, 'master') 
     uses: LianJo/DevTestPublic/.github/workflows/trigger.yml@master
     secrets:
       CI_BOT_GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
 
   bumping-after-build:
+    if: contains(github.ref, 'master') 
     needs: bumping
     runs-on: ubuntu-20.04
   
