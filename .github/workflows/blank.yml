@@ -17,9 +17,6 @@ jobs:
   build:
     needs: bumping
     runs-on: ubuntu-20.04
-
-    env:
-      new_ver: ${{ needs.bumping.outputs }}
   
     steps:
       - uses: actions/checkout@v2
@@ -31,3 +28,5 @@ jobs:
         run: |
           foo=("aa" "bb")
           echo ${#foo[*]}
+
+          echo ${{ needs.bumping }}

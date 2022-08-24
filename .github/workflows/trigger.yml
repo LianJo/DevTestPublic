@@ -27,7 +27,7 @@ jobs:
             cond=$1
             output=$2
 
-            [ "$cond" = "true" ] && [ "${{ github.event.review.state }}" = "approved" ] && echo "::set-output name=projectRootPath::$output"
+            [ "$cond" = "true" ] && echo "::set-output name=projectRootPath::$output"
           }
 
           echo `getRootPath ${{ steps.pathChecker.outputs.dir-filter }} nodejs/test_project_dir`
@@ -38,7 +38,7 @@ jobs:
             cond=$1
             output=$2
 
-            [ "$cond" = "true" ] && [ "${{ github.event.review.state }}" = "approved" ] && echo "::set-output name=projectName::$output"
+            [ "$cond" = "true" ] && echo "::set-output name=projectName::$output"
           }
           
           echo `getProjectName ${{ steps.pathChecker.outputs.dir-filter }} test`
