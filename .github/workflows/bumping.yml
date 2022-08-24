@@ -68,6 +68,7 @@ jobs:
           
           chmod +x ./scripts/version-util/workflow_running.sh
           new_version=$(bash ./scripts/version-util/workflow_running.sh -p $pr_title -r ${{ inputs.project_root_path }} -n ${{ inputs.project_name }} -t ${{ env.LAST_TAG }})
+          echo "${new_version}"
           echo "::set-output name=NEW_VERSION::${new_version}"
         env:
           GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}

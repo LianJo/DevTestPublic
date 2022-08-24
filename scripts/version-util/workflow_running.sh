@@ -37,7 +37,7 @@ function pushTag {
 
     if [[ $type != "release" ]]; then
         git tag -a "${tag_name}" -m "ci: Pre-Release Version Tagging '${tag_name}' to master"
-        git push origin "${tag_name}"
+        git push origin master "${tag_name}"
     fi
 }
 
