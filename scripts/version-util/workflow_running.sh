@@ -32,8 +32,8 @@ function getBumpType {
 }
 
 function pushTag {
-    type=$1
-    tag_name=$2
+    local type=$1
+    local tag_name=$2
 
     if [[ $type != "release" ]]; then
         git tag -a "${tag_name}" -m "ci: Pre-Release Version Tagging '${tag_name}' to master"
@@ -41,14 +41,20 @@ function pushTag {
     fi
 }
 
-bump_type=$(getBumpType)
+function getVersionByTag {
+    local tag=$1
+    local project=$2
 
-if [[ $last_tag == */* ]]; then
-    split_tag=($(echo $last_tag | tr "/" "\n"))
-else
-    split_tag=($project_name "0.0.0")
-fi
-last_version=${split_tag[1]}
+    if [[ $last_tag == */* ]]; then
+        split_tag=($(echo $tag | tr "/" "\n"))
+    else
+        split_tag=($project "0.0.0")
+    fi
+    echo "${split_tag[1]}"
+}
+
+bump_type=$(getBumpType)
+last_version=$(getVersionByTag $last_tag $project_name)
 
 if [[ $project_root_path == *jvm-services* ]]; then
     new_version=$(node ./scripts/version-util/version-control.js gradle $project_root_path $last_version $bump_type)

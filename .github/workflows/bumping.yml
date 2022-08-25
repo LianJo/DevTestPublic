@@ -60,11 +60,13 @@ jobs:
 
       - name: change_file
         run: |
+          pr_title=${{ github.event.head_commit.message }}
+
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           
           chmod +x ./scripts/version-util/workflow_running.sh
-          new_version=$(bash ./scripts/version-util/workflow_running.sh -p "fix: aaa" -r ${{ inputs.project_root_path }} -n ${{ inputs.project_name }} -t ${{ env.LAST_TAG }})
+          new_version=$(bash ./scripts/version-util/workflow_running.sh -p ${pr_title} -r ${{ inputs.project_root_path }} -n ${{ inputs.project_name }} -t ${{ env.LAST_TAG }})
           echo "${new_version}"
           echo "::set-output name=NEW_VERSION::${new_version}"
         env:
