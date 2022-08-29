@@ -60,7 +60,7 @@ jobs:
 
       - name: change_file
         run: |
-          pr_title=${{ github.event.head_commit.message }}
+          pr_title="${{ github.event.head_commit.message }}"
 
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
