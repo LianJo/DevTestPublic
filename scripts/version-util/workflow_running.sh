@@ -45,7 +45,7 @@ function getVersionByTag {
     local tag=$1
     local project=$2
 
-    if [[ $last_tag == */* ]]; then
+    if [[ $tag == */* ]]; then
         split_tag=($(echo $tag | tr "/" "\n"))
     else
         split_tag=($project "0.0.0")
