@@ -10,7 +10,6 @@ on:
 
 jobs:
   bumping:
-    name: main_bumping
     if: contains(github.ref, 'master') 
     uses: LianJo/DevTestPublic/.github/workflows/trigger.yml@master
     secrets:
@@ -18,7 +17,7 @@ jobs:
 
   bumping-after-build:
     if: contains(github.ref, 'master') 
-    needs: main_bumping
+    needs: bumping
     runs-on: ubuntu-20.04
   
     steps:

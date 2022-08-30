@@ -48,7 +48,7 @@ jobs:
         id: tagger
         continue-on-error: true
 
-      - name: save-last-tag
+      - id: save-last-tag
         run: |
           if [ "${{ steps.tagger.outcome }}" != "success" ]
           then
@@ -58,7 +58,7 @@ jobs:
           fi
           echo "::set-output name=lastTag::${LAST_TAG}"
 
-      - name: change_file
+      - id: change_file
         run: |
           pr_title="${{ github.event.head_commit.message }}"
 

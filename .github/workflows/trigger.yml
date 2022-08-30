@@ -4,7 +4,7 @@ on:
   workflow_call:
     outputs:
       NEW_VERSION:
-        value: ${{ jobs.test.outputs.NEW_VERSION }}
+        value: ${{ jobs.testaa.outputs.NEW_VERSION }}
     secrets:
       CI_BOT_GITHUB_TOKEN:
         required: true
@@ -48,7 +48,6 @@ jobs:
 
   bumping:
     needs: trigger_path_check
-    name: version_output
     if: needs.trigger_path_check.outputs.project_root_path != '' && needs.trigger_path_check.outputs.project_name != ''
     uses: LianJo/DevTestPublic/.github/workflows/bumping.yml@master
     with:
@@ -57,14 +56,14 @@ jobs:
     secrets:
       CI_BOT_GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
 
-  test:
-    needs: version_output
+  testaa:
+    needs: bumping
     runs-on: ubuntu-20.04
     outputs:
-      NEW_VERSION: ${{ steps.test.outputs.aa }}
+      NEW_VERSION: ${{ steps.test.outputs.ver }}
 
     steps:
-      - name: test
+      - id: test
         run: |
-          echo ${{ needs.version_output.outputs.NEW_VERSION }}
-          echo "::set-output name=aa::${{ needs.version_output.outputs.NEW_VERSION }}"
+          echo ${{ needs.bumping.outputs.NEW_VERSION }}
+          echo "::set-output name=ver::${{ needs.bumping.outputs.NEW_VERSION }}"
