@@ -44,6 +44,7 @@ function createGithubRelease {
 
     if [[ $type == "release" ]]; then
         # gh release create {tag} --target master --notes ""
+        echo ""
     fi
 }
 
