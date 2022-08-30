@@ -35,9 +35,15 @@ function pushTag {
     local type=$1
     local tag_name=$2
 
-    if [[ $type != "release" ]]; then
-        git tag -a "${tag_name}" -m "ci: Pre-Release Version Tagging '${tag_name}' to master"
-        git push origin master "${tag_name}"
+    git tag -a "${tag_name}" -m "ci: Pre-Release Version Tagging '${tag_name}' to master"
+    git push origin master "${tag_name}"
+}
+
+function createGithubRelease {
+    local tag=$1
+
+    if [[ $type == "release" ]]; then
+        # gh release create {tag} --target master --notes ""
     fi
 }
 
@@ -45,7 +51,7 @@ function getVersionByTag {
     local tag=$1
     local project=$2
 
-    if [[ $tag == */* ]]; then
+    if [[ $last_tag == */* ]]; then
         split_tag=($(echo $tag | tr "/" "\n"))
     else
         split_tag=($project "0.0.0")
@@ -59,9 +65,11 @@ last_version=$(getVersionByTag $last_tag $project_name)
 if [[ $project_root_path == *jvm-services* ]]; then
     new_version=$(node ./scripts/version-util/version-control.js gradle $project_root_path $last_version $bump_type)
     pushTag $bump_type "${project_name}/${new_version}"
+    createGithubRelease "${project_name}/${new_version}"
     echo $new_version
 elif [[ $project_root_path == *nodejs* ]]; then
     new_version=$(node ./scripts/version-util/version-control.js nodejs $project_root_path $last_version $bump_type)
     pushTag $bump_type "${project_name}/${new_version}"
+    createGithubRelease "${project_name}/${new_version}"
     echo $new_version
 fi
