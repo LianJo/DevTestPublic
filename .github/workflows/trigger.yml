@@ -4,7 +4,7 @@ on:
   workflow_call:
     outputs:
       NEW_VERSION:
-        value: ${{ jobs.testaa.outputs.NEW_VERSION }}
+        value: ${{ jobs.bumping.outputs.NEW_VERSION }}
     secrets:
       CI_BOT_GITHUB_TOKEN:
         required: true
@@ -55,15 +55,3 @@ jobs:
       project_name: ${{ needs.trigger_path_check.outputs.project_name }}
     secrets:
       CI_BOT_GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
-
-  testaa:
-    needs: bumping
-    runs-on: ubuntu-20.04
-    outputs:
-      NEW_VERSION: ${{ steps.test.outputs.ver }}
-
-    steps:
-      - id: test
-        run: |
-          echo ${{ needs.bumping.outputs.NEW_VERSION }}
-          echo "::set-output name=ver::${{ needs.bumping.outputs.NEW_VERSION }}"
