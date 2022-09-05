@@ -60,7 +60,9 @@ jobs:
 
       - id: change_file
         run: |
-          pr_title='${{ github.event.head_commit.message }}'
+          read -r pr_title <<'EOF'
+          ${{ github.event.head_commit.message }}
+          EOF
           
           echo $pr_title
 
