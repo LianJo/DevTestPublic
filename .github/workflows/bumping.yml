@@ -60,7 +60,9 @@ jobs:
 
       - id: change_file
         run: |
-          pr_title=``${{ github.event.head_commit.message }}``
+          pr_title=````
+          ${{ github.event.head_commit.message }}
+          ````
           
           echo $pr_title
 
