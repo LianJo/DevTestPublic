@@ -30,4 +30,4 @@ jobs:
           
       - name: test2
         run: |
-          echo ${{ steps.test2.outputs.ti }}
+          echo ${{ steps.test.outputs.ti }}
