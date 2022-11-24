@@ -15,28 +15,7 @@ jobs:
     secrets:
       CI_BOT_GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
 
-  bumping-after-build:
-    if: contains(github.ref, 'master') 
-    needs: bumping
-    runs-on: ubuntu-20.04
-  
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-      
-      - name: test
-        run: |
-          foo=("aa" "bb")
-          echo ${#foo[*]}
-
-          echo '${{ toJSON(needs.bumping) }}'
-
-          echo '${{ toJSON(github.event) }}'
-
   test-build:
-    if: contains(github.event.action, 'synchronize') || contains(github.event.action, 'opened') 
     runs-on: ubuntu-20.04
   
     steps:
@@ -47,5 +26,8 @@ jobs:
       
       - name: test
         run: |
-          echo 'aaaag'
-          echo '${{ toJSON(github.event) }}'
+          echo 'ti=aaaag' >> $GITHUB_OUTPUT
+          
+      - name: test2
+        run: |
+          echo ${{ steps.test2.outputs.ti }}
